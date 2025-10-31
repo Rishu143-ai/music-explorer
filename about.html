@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About • Music Explorer QuerySet</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>🎶 About Music Explorer</h1>
+        <p>Learn how our intelligent search helps you explore music better</p>
+        <button id="themeToggle" class="theme-toggle">🌙 Dark Mode</button>
+    </header>
+
+    <main>
+        <section class="about-section">
+            <div class="about-content">
+                <h2>What is Music Explorer?</h2>
+                <p>
+                    Music Explorer is a sleek, interactive web app designed to help you discover, preview, and enjoy your favorite songs effortlessly. Whether you're searching by title, artist, or vibe, our intelligent search engine delivers fast, accurate results with a beautiful interface.
+                </p>
+
+                <h2>Key Features</h2>
+                <ul>
+                    <li>🎧 Smart search with real-time results</li>
+                    <li>🔁 Loop and 🔀 Shuffle playback controls</li>
+                    <li>🎵 Responsive audio player with volume control</li>
+                    <li>✨ Animated visuals and polished UI</li>
+                    <li>🔽 Download the song for offline listening</li>
+                </ul>
+
+                <h2>Why We Built It</h2>
+                <p>
+                    We believe music discovery should be intuitive, fun, and visually engaging. Music Explorer blends design and functionality to create a unique experience for music lovers everywhere. Our goal is to make finding and enjoying music as seamless as possible.
+                </p>
+
+                <div class="back-home">
+                    <a href="/">⬅ Back to Music Explorer</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>🎧 Made with ❤️ for music lovers from Rishabh Dubey</p>
+    </footer>
+<script>
+    const themeToggle = document.getElementById("themeToggle");
+    const currentTheme = localStorage.getItem("theme");
+
+    if (currentTheme === "light") {
+        document.body.classList.add("light-mode");
+        themeToggle.textContent = "🌙 Dark Mode";
+    }
+
+    themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+        const isLight = document.body.classList.contains("light-mode");
+        themeToggle.textContent = isLight ? "🌙 Dark Mode" : "☀️ Light Mode";
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+    });
+</script>
+</body>
+
+</html>

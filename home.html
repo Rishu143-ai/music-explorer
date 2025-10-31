@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Explorer</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>🎶 Music Explorer</h1>
+        <p>Discover and play your favorite songs</p>
+        <a href="/about" class="about-btn">About</a>
+        <button id="themeToggle" class="theme-toggle">🌙 Dark Mode</button>
+    </header>
+
+    <main>
+        <form action="" method="post" class="search-form">
+            <input type="search" name="song-search" id="searchbar" placeholder="Search for a song..." />
+            <input type="submit" value="Search" />
+        </form>
+
+        <div class="controls">
+            <button id="loopToggle">🔁 Loop: Off</button>
+            <button id="shuffleToggle">🔀 Shuffle: Off</button>
+        </div>
+
+        <div class="songs-container">
+            {% for song in songs %}
+            <div class="song-card">
+
+                <div class="image-area">
+                    <img class="song-image" src="{{ song['image'][1]['url'] }}" alt="Song Art">
+                </div>
+
+                <div class="song-details">
+                    <h2>{{ song['name'] }}</h2>
+                    <p>by <strong>{{ song['artists']['primary'][0]['name'] }}</strong></p>
+                    <p>⏱ {{ (song['duration'] // 60)|int }}:{{ '%02d' % (song['duration'] % 60) }}</p>
+                    <audio src="{{ song['downloadUrl'][-1]['url'] }}" controls></audio>
+                    <input type="range" min="0" max="1" step="0.01" value="1" class="volume-slider" title="Volume">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        <p>@2025 copyright. All rights reserved.</p>
+        <p>🎧 Made with ❤️ for music lovers from Rishabh Dubey</p>
+    </footer>
+
+    <!-- 🎶 JavaScript to handle play/pause, single playback, loop, shuffle, volume -->
+    <script>
+        const allCards = document.querySelectorAll(".song-card");
+        let loopEnabled = false;
+        let shuffleEnabled = false;
+
+        const loopBtn = document.getElementById("loopToggle");
+        const shuffleBtn = document.getElementById("shuffleToggle");
+
+        loopBtn.addEventListener("click", () => {
+            loopEnabled = !loopEnabled;
+            loopBtn.textContent = loopEnabled ? "🔁 Loop: On" : "🔁 Loop: Off";
+        });
+
+        shuffleBtn.addEventListener("click", () => {
+            shuffleEnabled = !shuffleEnabled;
+            shuffleBtn.textContent = shuffleEnabled ? "🔀 Shuffle: On" : "🔀 Shuffle: Off";
+        });
+
+        allCards.forEach((card, index) => {
+            const audio = card.querySelector("audio");
+            const img = card.querySelector(".song-image");
+            const volumeSlider = card.querySelector(".volume-slider");
+
+            volumeSlider.addEventListener("input", () => {
+                audio.volume = volumeSlider.value;
+            });
+
+            audio.addEventListener("play", () => {
+                allCards.forEach(otherCard => {
+                    const otherAudio = otherCard.querySelector("audio");
+                    const otherImg = otherCard.querySelector(".song-image");
+                    if (otherAudio !== audio) {
+                        otherAudio.pause();
+                        otherImg.classList.remove("playing");
+                    }
+                });
+                img.classList.add("playing");
+            });
+
+            audio.addEventListener("pause", () => img.classList.remove("playing"));
+
+            audio.addEventListener("ended", () => {
+                img.classList.remove("playing");
+
+                if (loopEnabled) {
+                    audio.currentTime = 0;
+                    audio.play();
+                    img.classList.add("playing");
+                    return;
+                }
+
+                let nextIndex = index + 1;
+
+                if (shuffleEnabled) {
+                    nextIndex = Math.floor(Math.random() * allCards.length);
+                    if (nextIndex === index) nextIndex = (nextIndex + 1) % allCards.length;
+                }
+
+                const nextCard = allCards[nextIndex];
+                if (nextCard) {
+                    const nextAudio = nextCard.querySelector("audio");
+                    const nextImg = nextCard.querySelector(".song-image");
+                    nextAudio.play();
+                    nextImg.classList.add("playing");
+                }
+            });
+        });
+    </script>
+<script>
+    const themeToggle = document.getElementById("themeToggle");
+    const currentTheme = localStorage.getItem("theme");
+
+    if (currentTheme === "light") {
+        document.body.classList.add("light-mode");
+        themeToggle.textContent = "🌙 Dark Mode";
+    }
+
+    themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+        const isLight = document.body.classList.contains("light-mode");
+        themeToggle.textContent = isLight ? "🌙 Dark Mode" : "☀️ Light Mode";
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+    });
+</script>
+</body>
+
+</html>
